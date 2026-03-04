@@ -20,7 +20,7 @@ Outline:
 - [Switch to the `<task-branch>`](#switch-to-the-task-branch)
   - [`<task-branch>`](#task-branch)
 - [Edit files](#edit-files)
-- [Commit](#commit)
+- [Commit changes](#commit-changes)
 - [(Optional) Undo commits](#optional-undo-commits)
 - [Push commits](#push-commits)
 - [Create a PR to the `main` branch in your fork](#create-a-pr-to-the-main-branch-in-your-fork)
@@ -61,7 +61,7 @@ Alternatively, the name of that branch (without `<` and `>`).
 
 [Edit files](./vs-code.md#editor) using `VS Code` to produce changes.
 
-## Commit
+## Commit changes
 
 [Commit changes](./git-vscode.md#commit-changes) to the [`<task-branch>`](#task-branch) to complete the task.
 

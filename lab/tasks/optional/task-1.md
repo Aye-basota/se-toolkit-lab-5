@@ -49,7 +49,7 @@ Title: `[Task] CI/CD`
    2. Run all back-end unit tests using `uv run poe test`.
    3. Start containers using `Docker Compose`.
    4. Run all end-to-end tests.
-4. [Commit](../../../wiki/git-workflow.md#commit) the workflow file.
+4. [Commit changes](../../../wiki/git-workflow.md#commit-changes).
 5. Push the branch to `GitHub`.
 
    Verify the workflow runs and passes in the `Actions` tab of your fork.
@@ -71,7 +71,7 @@ Title: `[Task] CI/CD`
 
    - [`<your-dockerhub-username>`](../../../wiki/docker.md#your-dockerhub-username)
    - `<git-commit-hash>` with the [hash of the commit](../../../wiki/git.md#commit-hash) that triggered the workflow.
-5. [Commit](../../../wiki/git-workflow.md#commit) the workflow update.
+5. [Commit changes](../../../wiki/git-workflow.md#commit-changes).
 6. Push the branch to `GitHub`.
 
    Verify the image appears on `DockerHub` after the workflow passes.

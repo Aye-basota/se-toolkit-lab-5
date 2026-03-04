@@ -227,7 +227,7 @@ Method 2:
 
 #### 1.5.3. Deploy the change to the VM
 
-1. [Commit](../../../wiki/git-workflow.md#commit) your changes.
+1. [Commit changes](../../../wiki/git-workflow.md#commit-changes).
 
    Use the following commit message:
 
