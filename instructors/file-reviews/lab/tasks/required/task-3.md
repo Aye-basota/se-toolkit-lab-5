@@ -77,15 +77,15 @@ No issues found.
 
 ### 4.1. Instructions wording
 
-1. **Line 215:** Compound instruction — "pull your branch and restart the services" joins two distinct actions with "and". Should be split or use "Complete these steps:".
-2. **Line 229:** Compound instruction — "Connect with your API key and verify the Dashboard page shows charts" joins two actions with "and". Should be two separate steps.
+1. ~~**Line 215:** Compound instruction — "pull your branch and restart the services" joins two distinct actions with "and". Should be split or use "Complete these steps:".~~
+2. ~~**Line 229:** Compound instruction — "Connect with your API key and verify the Dashboard page shows charts" joins two actions with "and". Should be two separate steps.~~
 
 ### 4.2. Terminal commands
 
-1. **Lines 62–66:** Terminal command `cd ..` missing the "To..." intention pattern and the `[run in the `VS Code Terminal`]` wiki link. Currently reads "Go back to the project root:".
-2. **Lines 153–157:** Same violation as above — `cd ..` without "To..." pattern or wiki link.
-3. **Lines 205–209:** Terminal command `git push -u origin <task-branch>` missing the "To..." intention pattern and wiki link. Currently reads "Push your task branch:".
-4. **Lines 215–221:** Three separate commands (`cd`, `git fetch && checkout && pull`, `docker compose up`) in a single code block, all missing the "To..." intention pattern and wiki link. Each command should have its own "To..." block.
+1. ~~**Lines 62–66:** Terminal command `cd ..` missing the "To..." intention pattern and the `[run in the `VS Code Terminal`]` wiki link. Currently reads "Go back to the project root:".~~
+2. ~~**Lines 153–157:** Same violation as above — `cd ..` without "To..." pattern or wiki link.~~
+3. ~~**Lines 205–209:** Terminal command `git push -u origin <task-branch>` missing the "To..." intention pattern and wiki link. Currently reads "Push your task branch:".~~
+4. ~~**Lines 215–221:** Three separate commands (`cd`, `git fetch && checkout && pull`, `docker compose up`) in a single code block, all missing the "To..." intention pattern and wiki link. Each command should have its own "To..." block.~~
 
 ### 4.3. Command Palette commands
 
@@ -113,8 +113,8 @@ No issues found.
 
 ### 4.9. Notes, tips, warnings
 
-1. **Lines 149–151:** `> [!TIP]` alert is indented inside list item 3 (step 1.6). Convention states "Do not indent alerts. GitHub-flavored Markdown alerts do not render correctly when indented (e.g., inside a list item)."
-2. **Lines 191–193:** `> [!NOTE]` alert is indented inside list item 6 (step 1.7). Same violation.
+1. ~~**Lines 149–151:** `> [!TIP]` alert is indented inside list item 3 (step 1.6). Convention states "Do not indent alerts. GitHub-flavored Markdown alerts do not render correctly when indented (e.g., inside a list item)."~~
+2. ~~**Lines 191–193:** `> [!NOTE]` alert is indented inside list item 6 (step 1.7). Same violation.~~
 
 ### 4.10. Images
 
@@ -150,8 +150,8 @@ Not applicable.
 
 ### 4.18. Inline formatting of technical terms
 
-1. **Line 9:** `React` is not backticked. Should be `` `React` ``.
-2. **Line 98:** `TypeScript` is not backticked. Should be `` `TypeScript` ``.
+1. ~~**Line 9:** `React` is not backticked. Should be `` `React` ``.~~
+2. ~~**Line 98:** `TypeScript` is not backticked. Should be `` `TypeScript` ``.~~
 
 ### 4.19. Steps with sub-steps
 
@@ -167,8 +167,8 @@ No issues found.
 
 ### 4.22. Environment variable references
 
-1. **Line 175:** `CADDY_PORT` in `.env.docker.secret` is referenced in prose but neither the variable nor the file is linked to its wiki section. Should use the format: `` [`CADDY_PORT`](../../../wiki/dotenv-docker-secret.md#caddy_port) in [`.env.docker.secret`](../../../wiki/dotenv-docker-secret.md#what-is-envdockersecret) ``.
-2. **Line 227:** Same violation — `CADDY_PORT` in `.env.docker.secret` not linked.
+1. ~~**Line 175:** `CADDY_PORT` in `.env.docker.secret` is referenced in prose but neither the variable nor the file is linked to its wiki section. Should use the format: `` [`CADDY_PORT`](../../../wiki/dotenv-docker-secret.md#caddy_port) in [`.env.docker.secret`](../../../wiki/dotenv-docker-secret.md#what-is-envdockersecret) ``.~~
+2. ~~**Line 227:** Same violation — `CADDY_PORT` in `.env.docker.secret` not linked.~~
 
 ### 4.23. Horizontal rules
 

@@ -6,7 +6,7 @@
 
 <h4>Purpose</h4>
 
-Add charts to the front-end to visualize the analytics data from Task 2, and learn to integrate a chart library into a React application.
+Add charts to the front-end to visualize the analytics data from Task 2, and learn to integrate a chart library into a `React` application.
 
 <h4>Context</h4>
 
@@ -59,7 +59,9 @@ Title: `[Task] Dashboard Front-end`
    npm install chart.js react-chartjs-2
    ```
 
-3. Go back to the project root:
+3. To go back to the project root,
+
+   [run in the `VS Code Terminal`](../../../wiki/vs-code.md#run-a-command-in-the-vs-code-terminal):
 
    ```terminal
    cd ..
@@ -95,7 +97,7 @@ Title: `[Task] Dashboard Front-end`
    - Reads the API token from `localStorage` (key: `api_key`) for the `Authorization: Bearer` header.
    - Renders at least one `<canvas>` element (this is how `Chart.js` renders charts).
    - Handles loading and error states.
-   - Uses proper TypeScript types for API responses (no `any` types).
+   - Uses proper `TypeScript` types for API responses (no `any` types).
 
 > [!TIP]
 > If you prefer to implement manually, here is the minimal setup for a bar chart:
@@ -146,11 +148,11 @@ Title: `[Task] Dashboard Front-end`
    - Using `any` instead of a proper interface for API responses.
    - Accessing properties on possibly `undefined` values without null checks.
 
-   > [!TIP]
-   > If you used an AI agent, give it the error output and ask it to fix the type errors.
-   > Include the instruction "Do not use `any` types" in your prompt.
+   **Tip:** If you used an AI agent, give it the error output and ask it to fix the type errors. Include the instruction "Do not use `any` types" in your prompt.
 
-4. Go back to the project root:
+4. To go back to the project root,
+
+   [run in the `VS Code Terminal`](../../../wiki/vs-code.md#run-a-command-in-the-vs-code-terminal):
 
    ```terminal
    cd ..
@@ -172,7 +174,7 @@ Title: `[Task] Dashboard Front-end`
    2. Copy it to `frontend/.env`.
    3. Set `VITE_API_TARGET` to the URL of your back-end API, for example `http://<your-vm-ip-address>:42002`.
 
-      If you changed `CADDY_PORT` in `.env.docker.secret`, use your value instead of `42002`.
+      If you changed [`CADDY_PORT`](../../../wiki/dotenv-docker-secret.md#caddy_port) in [`.env.docker.secret`](../../../wiki/dotenv-docker-secret.md#what-is-envdockersecret), use your value instead of `42002`.
 
 3. To install dependencies and start the dev server,
 
@@ -188,9 +190,7 @@ Title: `[Task] Dashboard Front-end`
 
    You should see charts rendering with data from the analytics endpoints.
 
-   > [!NOTE]
-   > Make sure you have run `POST /pipeline/sync` at least once (from Task 1)
-   > so there is data for the analytics endpoints to return.
+   **Note:** Make sure you have run `POST /pipeline/sync` at least once (from Task 1) so there is data for the analytics endpoints to return.
 
 ### 1.8. Commit and push your work
 
@@ -202,7 +202,9 @@ Title: `[Task] Dashboard Front-end`
    feat: add analytics dashboard with charts
    ```
 
-2. Push your task branch:
+2. To push your task branch,
+
+   [run in the `VS Code Terminal`](../../../wiki/vs-code.md#run-a-command-in-the-vs-code-terminal):
 
    ```terminal
    git push -u origin <task-branch>
@@ -212,21 +214,38 @@ Title: `[Task] Dashboard Front-end`
 
 ### 1.9. Deploy to the VM
 
-1. On your VM, pull your branch and restart the services:
+1. To navigate to the project directory on your VM,
+
+   [run in the `VS Code Terminal`](../../../wiki/vs-code.md#run-a-command-in-the-vs-code-terminal):
 
    ```terminal
    cd se-toolkit-lab-5
+   ```
+
+2. To pull your branch,
+
+   [run in the `VS Code Terminal`](../../../wiki/vs-code.md#run-a-command-in-the-vs-code-terminal):
+
+   ```terminal
    git fetch origin && git checkout <task-branch> && git pull
-   docker compose --env-file .env.docker.secret up --build caddy -d
    ```
 
    Replace [`<task-branch>`](../../../wiki/git-workflow.md#task-branch).
 
-2. Open in a browser: `http://<your-vm-ip-address>:42002`.
+3. To restart the services,
 
-   If you changed `CADDY_PORT` in `.env.docker.secret`, use your value instead of `42002`.
+   [run in the `VS Code Terminal`](../../../wiki/vs-code.md#run-a-command-in-the-vs-code-terminal):
 
-   Connect with your API key and verify the Dashboard page shows charts.
+   ```terminal
+   docker compose --env-file .env.docker.secret up --build caddy -d
+   ```
+
+4. Open in a browser: `http://<your-vm-ip-address>:42002`.
+
+   If you changed [`CADDY_PORT`](../../../wiki/dotenv-docker-secret.md#caddy_port) in [`.env.docker.secret`](../../../wiki/dotenv-docker-secret.md#what-is-envdockersecret), use your value instead of `42002`.
+
+5. Connect with your API key.
+6. Verify the Dashboard page shows charts.
 
    <details><summary>Troubleshooting</summary>
 
