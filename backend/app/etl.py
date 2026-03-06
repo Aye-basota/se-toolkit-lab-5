@@ -1,11 +1,9 @@
-"""ETL pipeline: fetch data from the autochecker API and load it into the database.
-
-The autochecker dashboard API provides two endpoints:
-- GET /api/items — lab/task catalog
-- GET /api/logs  — anonymized check results (supports ?since= and ?limit= params)
-
-Both require HTTP Basic Auth (email + password from settings).
-"""
+from datetime import datetime
+from app.models.learner import Learner
+from app.models.interaction import InteractionLog
+from sqlmodel import select, func
+from app.models.item import ItemRecord 
+import httpx
 
 from datetime import datetime
 
@@ -20,38 +18,46 @@ from app.settings import settings
 
 
 async def fetch_items() -> list[dict]:
-    """Fetch the lab/task catalog from the autochecker API.
+  url = f"{settings.autochecker_api_url}/api/items"
+  auth_credentials = (settings.autochecker_email, settings.autochecker_password)
 
-    TODO: Implement this function.
-    - Use httpx.AsyncClient to GET {settings.autochecker_api_url}/api/items
-    - Pass HTTP Basic Auth using settings.autochecker_email and
-      settings.autochecker_password
-    - The response is a JSON array of objects with keys:
-      lab (str), task (str | null), title (str), type ("lab" | "task")
-    - Return the parsed list of dicts
-    - Raise an exception if the response status is not 200
-    """
-    raise NotImplementedError
+
+  async with httpx.AsyncClient() as client:
+    respone = await client.get(url, auth = auth_credentials)
+    response.raise_for_status()
+    data = response.json()
+    return data
 
 
 async def fetch_logs(since: datetime | None = None) -> list[dict]:
-    """Fetch check results from the autochecker API.
+  url = f"{settings.autochecker_api_url}/api/logs" 
+  auth_credentials = (settings.autochecker_email, settings.autochecker_password)
+  all_logs = []
+  async with httpx.AsyncClient() as client:
+        while True:
+            
+            params = {"limit": 500}
+            
+            if since is not None:
+               if isinstance(since, datetime):
+                    params["since"] = since.isoformat()
+                else:
+                   params["since"] = since
 
-    TODO: Implement this function.
-    - Use httpx.AsyncClient to GET {settings.autochecker_api_url}/api/logs
-    - Pass HTTP Basic Auth using settings.autochecker_email and
-      settings.autochecker_password
-    - Query parameters:
-      - limit=500 (fetch in batches)
-      - since={iso timestamp} if provided (for incremental sync)
-    - The response JSON has shape:
-      {"logs": [...], "count": int, "has_more": bool}
-    - Handle pagination: keep fetching while has_more is True
-      - Use the submitted_at of the last log as the new "since" value
-    - Return the combined list of all log dicts from all pages
-    """
-    raise NotImplementedError
+            response = await client.get(url, auth=auth_credentials, params=params)
+            response.raise_for_status()
+            
+            data = response.json()
+            logs_batch = data["logs"]
+            
+            all_logs.extend(logs_batch)
 
+            if data["has_more"] is False:
+                break
+            last_log_in_batch = logs_batch[-1]
+            since = last_log_in_batch["submitted_at"]
+
+    return all_logs
 
 # ---------------------------------------------------------------------------
 # Load — insert fetched data into the local database
@@ -59,89 +65,211 @@ async def fetch_logs(since: datetime | None = None) -> list[dict]:
 
 
 async def load_items(items: list[dict], session: AsyncSession) -> int:
-    """Load items (labs and tasks) into the database.
+    new_items_count = 0
+    
+    # Создаем пустой словарь. В нем мы будем хранить связь:
+    # "короткое имя лабы из API" -> "готовый объект лабы из базы данных"
+    # Например: {"lab-01": <ItemRecord id=5 title="Первая лаба">}
+    lab_mapping = {} 
 
-    TODO: Implement this function.
-    - Import ItemRecord from app.models.item
-    - Process labs first (items where type="lab"):
-      - For each lab, check if an item with type="lab" and matching title
-        already exists (SELECT)
-      - If not, INSERT a new ItemRecord(type="lab", title=lab_title)
-      - Build a dict mapping the lab's short ID (the "lab" field, e.g.
-        "lab-01") to the lab's database record, so you can look up
-        parent IDs when processing tasks
-    - Then process tasks (items where type="task"):
-      - Find the parent lab item using the task's "lab" field (e.g.
-        "lab-01") as the key into the dict you built above
-      - Check if a task with this title and parent_id already exists
-      - If not, INSERT a new ItemRecord(type="task", title=task_title,
-        parent_id=lab_item.id)
-    - Commit after all inserts
-    - Return the number of newly created items
-    """
-    raise NotImplementedError
+    # --- ШАГ 1: Обрабатываем лабораторные (labs) ---
+    for item_data in items:
+        if item_data["type"] == "lab":
+            lab_short_id = item_data["lab"]
+            lab_title = item_data["title"]
 
+            # Ищем, нет ли уже такой лабы в нашей базе (чтобы не создавать дубликаты)
+            # select(...) - это SQL-запрос: SELECT * FROM itemrecord WHERE type='lab' AND title='...'
+            query = select(ItemRecord).where(
+                ItemRecord.type == "lab", 
+                ItemRecord.title == lab_title
+            )
+            result = await session.exec(query)
+            db_lab = result.first() # Берем первое совпадение или None
 
+            # Если такой лабы еще нет - создаем!
+            if not db_lab:
+                db_lab = ItemRecord(type="lab", title=lab_title)
+                session.add(db_lab) # Добавляем в сессию
+                new_items_count += 1
+                
+                # ВАЖНО: flush отправляет данные в БД, чтобы база выдала нашей лабе уникальный ID.
+                # Но это еще не финальное сохранение (commit)!
+                await session.flush()
+
+            # Обязательно сохраняем лабу в наш словарь-шпаргалку для второго шага
+            lab_mapping[lab_short_id] = db_lab
+
+    # --- ШАГ 2: Обрабатываем задачи (tasks) ---
+    for item_data in items:
+        if item_data["type"] == "task":
+            lab_short_id = item_data["lab"]
+            task_title = item_data["title"]
+            
+            # Достаем родительскую лабу из нашего словаря-шпаргалки
+            parent_lab = lab_mapping.get(lab_short_id)
+            if not parent_lab:
+                continue # Если родителя почему-то нет, просто пропускаем эту задачу
+
+            # Снова ищем в базе: есть ли уже такая задача у этой лабы?
+            query = select(ItemRecord).where(
+                ItemRecord.type == "task",
+                ItemRecord.title == task_title,
+                ItemRecord.parent_id == parent_lab.id # Указываем ID родителя!
+            )
+            result = await session.exec(query)
+            db_task = result.first()
+
+            # Если задачи нет - создаем
+            if not db_task:
+                db_task = ItemRecord(
+                    type="task", 
+                    title=task_title, 
+                    parent_id=parent_lab.id
+                )
+                session.add(db_task)
+                new_items_count += 1
+                await session.flush()
+
+    # --- ШАГ 3: Финальное сохранение ---
+    # Только сейчас все наши изменения реально записываются на жесткий диск базы данных.
+    await session.commit()
+
+    # Возвращаем количество созданных записей, как просили в задании
+    return new_items_count
 async def load_logs(
     logs: list[dict], items_catalog: list[dict], session: AsyncSession
 ) -> int:
-    """Load interaction logs into the database.
+    new_interactions_count = 0
 
-    Args:
-        logs: Raw log dicts from the API (each has lab, task, student_id, etc.)
-        items_catalog: Raw item dicts from fetch_items() — needed to map
-            short IDs (e.g. "lab-01", "setup") to item titles stored in the DB.
-        session: Database session.
+    # --- ШАГ 1: Создаем словарь-шпаргалку для поиска названий ---
+    # В логах есть только короткие имена (например, lab="lab-01", task="setup").
+    # А в базе данных предметы лежат по их полному названию (title).
+    # Делаем словарь, где ключ — это кортеж (lab, task), а значение — title.
+    item_title_lookup = {}
+    for item in items_catalog:
+        lab = item.get("lab")
+        task = item.get("task") # У лабораторных это поле будет None
+        title = item["title"]
+        item_title_lookup[(lab, task)] = title
 
-    TODO: Implement this function.
-    - Import Learner from app.models.learner
-    - Import InteractionLog from app.models.interaction
-    - Import ItemRecord from app.models.item
-    - Build a lookup from (lab_short_id, task_short_id) to item title
-      using items_catalog. For labs, the key is (lab, None). For tasks,
-      the key is (lab, task). The value is the item's title.
-    - For each log dict:
-      1. Find or create a Learner by external_id (log["student_id"])
-         - If creating, set student_group from log["group"]
-      2. Find the matching item in the database:
-         - Use the lookup to get the title for (log["lab"], log["task"])
-         - Query the DB for an ItemRecord with that title
-         - Skip this log if no matching item is found
-      3. Check if an InteractionLog with this external_id already exists
-         (for idempotent upsert — skip if it does)
-      4. Create InteractionLog with:
-         - external_id = log["id"]
-         - learner_id = learner.id
-         - item_id = item.id
-         - kind = "attempt"
-         - score = log["score"]
-         - checks_passed = log["passed"]
-         - checks_total = log["total"]
-         - created_at = parsed log["submitted_at"]
-    - Commit after all inserts
-    - Return the number of newly created interactions
-    """
-    raise NotImplementedError
+    # --- ШАГ 2: Обрабатываем логи ---
+    for log in logs:
+        # 1. Ищем или создаем студента (Learner)
+        student_ext_id = log["student_id"]
+        
+        query_learner = select(Learner).where(Learner.external_id == student_ext_id)
+        result_learner = await session.exec(query_learner)
+        learner = result_learner.first()
 
+        # Если студента нет в базе — создаем его
+        if not learner:
+            learner = Learner(
+                external_id=student_ext_id, 
+                student_group=log.get("group")
+            )
+            session.add(learner)
+            await session.flush() # Сразу получаем ID для студента
 
+        # 2. Ищем предмет (ItemRecord) в базе
+        lab_short = log.get("lab")
+        task_short = log.get("task")
+        
+        # Достаем полное название из нашей шпаргалки
+        item_title = item_title_lookup.get((lab_short, task_short))
+        
+        # Если в каталоге такого предмета не было, пропускаем лог
+        if not item_title:
+            continue 
+
+        # Ищем предмет в БД по названию
+        query_item = select(ItemRecord).where(ItemRecord.title == item_title)
+        result_item = await session.exec(query_item)
+        item_record = result_item.first()
+
+        # Если в базе предмета нет (хотя должен быть после load_items), пропускаем
+        if not item_record:
+            continue
+
+        # 3. Проверка на дубликаты (идемпотентность)
+        log_ext_id = log["id"] # Уникальный ID самого лога из API
+        
+        query_log = select(InteractionLog).where(InteractionLog.external_id == log_ext_id)
+        result_log = await session.exec(query_log)
+        existing_log = result_log.first()
+
+        # Если такой лог уже загружали ранее — просто пропускаем его
+        if existing_log:
+            continue
+
+        # 4. Создаем новую запись InteractionLog
+        # API присылает дату как строку ("2026-03-06T10:19:49Z"), 
+        # а базе нужен объект datetime. Превращаем строку в дату:
+        date_str = log["submitted_at"].replace("Z", "+00:00") # Заменяем Z для совместимости
+        parsed_date = datetime.fromisoformat(date_str)
+
+        new_interaction = InteractionLog(
+            external_id=log_ext_id,
+            learner_id=learner.id,     # Связываем с ID студента
+            item_id=item_record.id,    # Связываем с ID задачи/лабы
+            kind="attempt",
+            score=log.get("score"),
+            checks_passed=log.get("passed"),
+            checks_total=log.get("total"),
+            created_at=parsed_date     # Наша распарсенная дата
+        )
+        
+        session.add(new_interaction)
+        new_interactions_count += 1
+        
+        # Здесь можно делать flush, а можно и не делать, так как 
+        # ID этого лога нам дальше в цикле не нужен. 
+        # Достаточно просто добавить в сессию.
+
+    # --- ШАГ 3: Финальное сохранение ---
+    # Отправляем все новые логи и новых студентов в базу данных одним махом
+    await session.commit()
+
+    return new_interactions_count
 # ---------------------------------------------------------------------------
 # Orchestrator
 # ---------------------------------------------------------------------------
 
 
 async def sync(session: AsyncSession) -> dict:
-    """Run the full ETL pipeline.
+    # --- ШАГ 1: Обновляем каталог ---
+    # Сначала скачиваем сырой каталог (список словарей) из интернета
+    raw_items = await fetch_items()
+    
+    # Сразу загружаем/обновляем его в базе данных.
+    # Результат (количество новых) нам тут не особо важен, поэтому не сохраняем его в переменную.
+    await load_items(raw_items, session)
 
-    TODO: Implement this function.
-    - Step 1: Fetch items from the API (keep the raw list) and load them
-      into the database
-    - Step 2: Determine the last synced timestamp
-      - Query the most recent created_at from InteractionLog
-      - If no records exist, since=None (fetch everything)
-    - Step 3: Fetch logs since that timestamp and load them
-      - Pass the raw items list to load_logs so it can map short IDs
-        to titles
-    - Return a dict: {"new_records": <number of new interactions>,
-                      "total_records": <total interactions in DB>}
-    """
-    raise NotImplementedError
+    # --- ШАГ 2: Ищем дату последнего лога ---
+    # func.max() — это агрегатная функция SQL. Она просматривает всю колонку created_at 
+    # и возвращает самое большое значение (то есть самую позднюю дату).
+    query_last_date = select(func.max(InteractionLog.created_at))
+    result_date = await session.exec(query_last_date)
+    last_sync_date = result_date.first() 
+    # Если таблица пустая (первый запуск), last_sync_date будет равен None.
+    # Это идеально, потому что наш fetch_logs(since=None) тогда скачает всё с самого начала.
+
+    # --- ШАГ 3: Скачиваем новые логи ---
+    # Передаем найденную дату в API. Получаем сырой список только новых логов.
+    raw_logs = await fetch_logs(since=last_sync_date)
+
+    # --- ШАГ 4: Загружаем новые логи в базу ---
+    # Передаем сырые логи и сырой каталог (чтобы внутри load_logs работала шпаргалка по названиям)
+    new_records_count = await load_logs(raw_logs, raw_items, session)
+
+    # --- ШАГ 5: Собираем статистику для отчета ---
+    # func.count() — еще одна агрегатная функция SQL. Она просто считает количество строк (id).
+    query_total = select(func.count(InteractionLog.id))
+    result_total = await session.exec(query_total)
+    total_records_count = result_total.first()
+
+    # Возвращаем красивый словарь с итогами работы, как просили в задании
+    return {
+        "new_records": new_records_count,
+        "total_records": total_records_count or 0 # or 0 на случай, если база вообще пустая
+    }
