@@ -1,5 +1,6 @@
 import { useState, useEffect, useReducer, FormEvent } from 'react'
 import './App.css'
+import Dashboard from './Dashboard' // Импортируем созданный компонент
 
 const STORAGE_KEY = 'api_key'
 
@@ -39,6 +40,9 @@ function App() {
   const [draft, setDraft] = useState('')
   const [fetchState, dispatch] = useReducer(fetchReducer, { status: 'idle' })
 
+  // Новое состояние для навигации
+  const [currentPage, setCurrentPage] = useState<'items' | 'dashboard'>('items')
+
   useEffect(() => {
     if (!token) return
 
@@ -69,6 +73,7 @@ function App() {
     localStorage.removeItem(STORAGE_KEY)
     setToken('')
     setDraft('')
+    setCurrentPage('items') // Сбрасываем страницу при выходе
   }
 
   if (!token) {
@@ -89,37 +94,60 @@ function App() {
 
   return (
     <div>
-      <header className="app-header">
-        <h1>Items</h1>
+      <header className="app-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <h1>My App</h1>
+          <nav style={{ display: 'flex', gap: '10px' }}>
+            <button
+              onClick={() => setCurrentPage('items')}
+              style={{ fontWeight: currentPage === 'items' ? 'bold' : 'normal', padding: '5px 10px' }}
+            >
+              Items
+            </button>
+            <button
+              onClick={() => setCurrentPage('dashboard')}
+              style={{ fontWeight: currentPage === 'dashboard' ? 'bold' : 'normal', padding: '5px 10px' }}
+            >
+              Dashboard
+            </button>
+          </nav>
+        </div>
         <button className="btn-disconnect" onClick={handleDisconnect}>
           Disconnect
         </button>
       </header>
 
-      {fetchState.status === 'loading' && <p>Loading...</p>}
-      {fetchState.status === 'error' && <p>Error: {fetchState.message}</p>}
+      {/* Отрисовываем либо Дашборд, либо старую таблицу в зависимости от стейта */}
+      {currentPage === 'dashboard' ? (
+        <Dashboard />
+      ) : (
+        <div>
+          {fetchState.status === 'loading' && <p>Loading...</p>}
+          {fetchState.status === 'error' && <p>Error: {fetchState.message}</p>}
 
-      {fetchState.status === 'success' && (
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>ItemType</th>
-              <th>Title</th>
-              <th>Created at</th>
-            </tr>
-          </thead>
-          <tbody>
-            {fetchState.items.map((item) => (
-              <tr key={item.id}>
-                <td>{item.id}</td>
-                <td>{item.type}</td>
-                <td>{item.title}</td>
-                <td>{item.created_at}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          {fetchState.status === 'success' && (
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>ItemType</th>
+                  <th>Title</th>
+                  <th>Created at</th>
+                </tr>
+              </thead>
+              <tbody>
+                {fetchState.items.map((item) => (
+                  <tr key={item.id}>
+                    <td>{item.id}</td>
+                    <td>{item.type}</td>
+                    <td>{item.title}</td>
+                    <td>{item.created_at}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       )}
     </div>
   )
