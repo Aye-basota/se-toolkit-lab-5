@@ -51,11 +51,6 @@ async def fetch_logs(since: datetime | None = None) -> list[dict]:
 
     return all_logs
 
-
-# ---------------------------------------------------------------------------
-# Load — insert fetched data into the local database
-# ---------------------------------------------------------------------------
-
 async def load_items(items: list[dict], session: AsyncSession) -> int:
     new_items_count = 0
     
