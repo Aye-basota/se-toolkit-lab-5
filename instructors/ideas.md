@@ -24,7 +24,6 @@
   - [Lab 5 - DONE - Repository](#lab-5---done---repository)
   - [Lab 5 - DONE - Conventions](#lab-5---done---conventions)
   - [Lab 5 - DONE - Skills](#lab-5---done---skills)
-  - [Lab 5 - DONE](#lab-5---done-1)
 - [Lab Observability - TODO](#lab-observability---todo)
   - [Lab Observability - TODO - Backlog](#lab-observability---todo---backlog)
   - [Lab Telegram Bot - TODO - Task 2](#lab-telegram-bot---todo---task-2)
@@ -43,11 +42,12 @@
 
 ### Lab 5 - TODO - Repo
 
+- agents.md
+- remember to use .agents
+
 ### Lab 5 - TODO - Conventions
 
-- indented note is a block quote
 - should a section in a sequence of steps assume the previous step?
-- the autochecker -> `Autochecker`
 - "frontend" and "backend" as nouns
 - Rename app -> backend
 - Rename `APP_` -> `BACK_`
@@ -74,6 +74,7 @@
 - number sections
   Keep Decision 1
 - Remove coverage section
+- Specify severity for violations
 
 ### Lab 5 - TODO - Config
 
@@ -99,7 +100,8 @@
   - for students - gives complete instructions on how to do the step
 - skill /explain-step-in-russian
   gives the same instructions as explain-step but in Russian
-
+- skill /rewrite-lab <programming-language>
+  
 ### Lab 5 - TODO - Instructors
 
 - goal: interact with the database, not just observe
@@ -120,6 +122,7 @@
 - Add instructions for qwen by ssh
   Need browser flow for free requests
   Therefore, will have to run on the laptop and connect by ssh
+- coding-agents.md - select lines and ask questions
 
 ### Lab 5 - TODO - Docs
 
@@ -198,12 +201,17 @@
 ### Lab 5 - DONE - Repository
 
 - [x] Move ideas to the instructors/ideas.md.
-- Do we have a convention that an indented
 
 ### Lab 5 - DONE - Conventions
 
-- [x] conventions: prohibit agent-specific language in skills
-      see contributing/conventions/agents/skills.md
+- conventions: prohibit agent-specific language in skills
+  see contributing/conventions/agents/skills.md
+- indented note is a block quote
+- meeting report
+  
+  date and deadline in separate sections
+- review which conventions aren't mentioned anywhere or mentioned without a markdown link
+- the autochecker -> `Autochecker`
 
 ### Lab 5 - DONE - Skills
 
@@ -214,11 +222,6 @@
   - bundle all instructions for task 1 in a readable doc
   
   Solution: We'll add a skill that explains a particular step.
-
-### Lab 5 - DONE
-
-- meeting report
-  date and deadline in separate sections
 
 ## Lab Observability - TODO
 
