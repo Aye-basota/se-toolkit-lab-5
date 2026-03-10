@@ -1,9 +1,3 @@
-"""Router for analytics endpoints.
-
-Each endpoint performs SQL aggregation queries on the interaction data
-populated by the ETL pipeline. All endpoints require a `lab` query
-parameter to filter results by lab (e.g., "lab-01").
-"""
 
 from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlmodel import select, func, case, col
