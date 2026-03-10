@@ -9,11 +9,6 @@ from app.models.interaction import InteractionLog
 from app.models.item import ItemRecord
 from app.settings import settings
 
-
-# ---------------------------------------------------------------------------
-# Extract — fetch data from the autochecker API
-# ---------------------------------------------------------------------------
-
 async def fetch_items() -> list[dict]:
     url = f"{settings.autochecker_api_url}/api/items"
     auth_credentials = (settings.autochecker_email, settings.autochecker_password)
