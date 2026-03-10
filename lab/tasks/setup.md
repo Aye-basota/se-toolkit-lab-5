@@ -98,13 +98,13 @@
 
 1. [Fork the course instructors' repo](../../wiki/github.md#fork-a-repo).
 
-   The course instructors' repo [URL](../../wiki/computer-networks.md#url) is <https://github.com/inno-se-toolkit/se-toolkit-lab-4>.
+   The course instructors' repo [URL](../../wiki/computer-networks.md#url) is <https://github.com/inno-se-toolkit/se-toolkit-lab-5>.
 
 #### 1.3.3. (UPD) Go to your fork
 
 1. [Go to your fork](../../wiki/github.md#go-to-your-fork).
 
-   The [URL](../../wiki/computer-networks.md#url) of your fork should look like `https://github.com/<your-github-username>/se-toolkit-lab-4`.
+   The [URL](../../wiki/computer-networks.md#url) of your fork should look like `https://github.com/<your-github-username>/se-toolkit-lab-5`.
 
 #### 1.3.4. (UPD) Enable issues
 
@@ -176,7 +176,7 @@
 1. [Go to your fork](#133-upd-go-to-your-fork).
 2. Copy [`<your-fork-url>`](../../wiki/github.md#your-fork-url).
 
-   It should look like `https://github.com/<your-github-username>/se-toolkit-lab-4`.
+   It should look like `https://github.com/<your-github-username>/se-toolkit-lab-5`.
 
    See [`<your-github-username>`](../../wiki/github.md#your-github-username).
 
@@ -185,7 +185,7 @@
 1. [Clone your fork](../../wiki/git-vscode.md#clone-the-repository):
 
    - Replace `<repo-url>` with [`<your-fork-url>`](../../wiki/github.md#your-fork-url).
-   - Replace `<repo-name>` with `se-toolkit-lab-4`.
+   - Replace `<repo-name>` with `se-toolkit-lab-5`.
 
 ### 1.7. (UPD) Open the cloned repo and set up `VS Code`
 
@@ -194,11 +194,11 @@
 > Otherwise, your setup will be broken.
 
 1. [Open in `VS Code` the directory](../../wiki/vs-code.md#open-the-directory):
-   `se-toolkit-lab-4`.
+   `se-toolkit-lab-5`.
 2. [Check the current shell in the `VS Code Terminal`](../../wiki/vs-code.md#check-the-current-shell-in-the-vs-code-terminal).
 3. [Install the recommended `VS Code` extensions](../../wiki/vs-code.md#install-the-recommended-vs-code-extensions).
 
-<details><summary>Troubleshooting</summary>
+<details><summary><b>Troubleshooting (click to open)</b></summary>
 
 <h4>The terminal shell is not <code>bash</code> or <code>zsh</code></h4>
 
@@ -242,7 +242,7 @@ If you can't [connect to your VM](../../wiki/vm.md#connect-to-the-vm), complete 
 
 ### 1.10. (UPD) Set up `Node.js`
 
-1. [Set up `Node.js`](../../wiki/nodejs.md#set-up-nodejs-in-vs-code).
+1. [Set up `Node.js`](../../wiki/nodejs.md#install-nodejs).
 
    **Note:** you've already opened the project directory.
 
@@ -277,7 +277,7 @@ If you can't [connect to your VM](../../wiki/vm.md#connect-to-the-vm), complete 
 
    Wait for the services to start. You should see log output from the `app`, `postgres`, `pgadmin`, and `caddy` containers.
 
-   <details><summary>Troubleshooting</summary>
+   <details><summary><b>Troubleshooting (click to open)</b></summary>
 
    <h4>Port conflict (<code>port is already allocated</code>)</h4>
 
@@ -378,7 +378,7 @@ If you can't [connect to your VM](../../wiki/vm.md#connect-to-the-vm), complete 
 1. [Open `pgAdmin`](../../wiki/pgadmin.md#open-pgadmin).
 2. [Connect `pgAdmin` to the `PostgreSQL` server](../../wiki/pgadmin.md#connect-to-the-postgresql-server).
 
-<details><summary>Troubleshooting</summary>
+<details><summary><b>Troubleshooting (click to open)</b></summary>
 
 <h4><code>pgAdmin</code> page does not load</h4>
 
@@ -407,7 +407,7 @@ Make sure the services are running. Go back to [step 1.11.2](#1112-upd-start-the
 
 ### 1.15. (UPD) Stop the services
 
-1. [Check that the current directory is `se-toolkit-lab-4`](../../wiki/shell.md#check-the-current-directory-is-directory-name).
+1. [Check that the current directory is `se-toolkit-lab-5`](../../wiki/shell.md#check-the-current-directory-is-directory-name).
 2. [Stop and remove all containers and volumes](../../wiki/docker-compose.md#stop-and-remove-all-containers-and-volumes).
 
 ### 1.16. (UPD) Set up a coding agent
@@ -419,8 +419,8 @@ A coding agent can help you write code, explain concepts, and debug issues.
   <img alt="Qwen response" src="../images/tasks/setup/qwen-response.png" style="width:300px"></img>
 </div>
 
-- Method 1: [Set up a `Qwen Code`-based agent](../../wiki/coding-agents.md#set-up-qwen-code-based-agent).
-- Method 2: [Choose another coding agent](../../wiki/coding-agents.md#choose-a-coding-agent).
+- Method 1: [Set up a `Qwen Code`-based agent](../../wiki/coding-agents.md#set-up-qwen-code).
+- Method 2: [Choose another coding agent](../../wiki/coding-agents.md#choose-and-use-a-coding-agent).
 
 ### 1.17. Set up the autochecker
 

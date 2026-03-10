@@ -12,4 +12,5 @@ __pycache__/
 .lycheecache
 
 tmp
-.aider*
+
+.agents/settings.local.json

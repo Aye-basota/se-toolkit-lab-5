@@ -15,7 +15,7 @@
     - [1.5.2. Prepare the environment (on the VM)](#152-prepare-the-environment-on-the-vm)
     - [1.5.3. Start the services (on the VM)](#153-start-the-services-on-the-vm)
   - [1.6. Verify the deployment](#16-verify-the-deployment)
-  - [1.7. Set up `Qwen Code`](#17-set-up-qwen-code)
+  - [1.7 Set up Qwen Code](#17-set-up-qwen-code)
 
 ## 1. Required steps
 
@@ -48,6 +48,7 @@
    ```terminal
    docker compose --env-file .env.docker.secret down -v
    ```
+
    you should see something like:
 
    ```
@@ -60,7 +61,7 @@
    ✔ Network se-toolkit-lab-4_default      Removed                                                                            0.2s
    ```
 
-5. Go back to the home directory:
+4. Go back to the home directory:
 
    ```terminal
    cd ~
@@ -99,27 +100,26 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
   git clone https://github.com/<your-github-username>/se-toolkit-lab-5
   ```
 
-3. Open the forked repo in `VS Code`.
+1. Open the forked repo in `VS Code`.
 
-4. Go to `VS Code Terminal`, [check that the current directory is `se-toolkit-lab-5`](../../wiki/shell.md#check-the-current-directory-is-directory-name), and install `Python` dependencies:
+2. Go to `VS Code Terminal`, [check that the current directory is `se-toolkit-lab-5`](../../wiki/shell.md#check-the-current-directory-is-directory-name), and install `Python` dependencies:
 
    ```terminal
    uv sync --dev
    ```
 
-5. Create the environment files:
+3. Create the environment files:
 
    ```terminal
-   cp .env.example .env.secret
    cp .env.docker.example .env.docker.secret
    ```
 
-6. Configure the autochecker API credentials.
+4. Configure the autochecker API credentials.
 
    The ETL pipeline fetches data from the autochecker dashboard API.
    You need to set your credentials in both environment files.
 
-   Open `.env.secret` (created from `.env.example`) and set:
+   Open `.env.docker.secret` (created from `.env.docker.example`) and set:
 
    ```text
    AUTOCHECKER_EMAIL=<your-email>@innopolis.university
@@ -137,7 +137,7 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
 
    > [!IMPORTANT]
    > The credentials must match your autochecker bot registration.
-   > If you haven't registered with the autochecker bot, see [step 1.7](#17-set-up-the-autochecker).
+   > If you haven't registered with the autochecker bot, see [step 1.7](#17-set-up-qwen-code).
 
 ### 1.4. Start the services locally (on your laptop)
 
@@ -153,7 +153,7 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
 
    Wait for the services to start. You should see log output from the `app`, `postgres`, `pgadmin`, and `caddy` containers.
 
-   <details><summary>Troubleshooting</summary>
+   <details><summary><b>Troubleshooting (click to open)</b></summary>
 
    <h4>Port conflict (<code>port is already allocated</code>)</h4>
 
@@ -191,11 +191,12 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
    ```terminal
    ssh <vm-user>@<vm-ip>
    ```
+
    e.g. ssh my-vm-user@10.93.1.1
 
    If unable, see [how to connect to vm](../../wiki/vm.md#connect-to-the-vm)
-   
-3. To clone your fork on the VM,
+
+2. To clone your fork on the VM,
 
    replace <github-username> and run in the `VS Code Terminal`:
 
@@ -204,7 +205,7 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
    git clone https://github.com/<github-username>/se-toolkit-lab-5.git
    ```
 
-4. To navigate to the project directory,
+3. To navigate to the project directory,
 
    run in the `VS Code Terminal`:
 
@@ -225,25 +226,27 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
 2. Edit `.env.docker.secret` and set your autochecker API credentials:
 
     Open the file with `nano`:
+
     ```terminal
     nano .env.docker.secret 
     ```
   
     Edit the two fields:
+
      ```text
      AUTOCHECKER_EMAIL=<your-email>@innopolis.university
      AUTOCHECKER_PASSWORD=<your-github-username><your-telegram-alias>
      ```
 
     Also set your API key, so that only authorized users can access it.
+
     ```text
     API_KEY=set-it-to-something-and-remember-it
     ```
   
-    Then save the edit by pressing `CTRL X` then type letter `y` and press `ENTER`. 
-    
+    Then save the edit by pressing `CTRL X` then type letter `y` and press `ENTER`.
+
     > It is useful to remember how to view and edit files with `nano` or another similar tool, it's a common operation.
-   
 
 #### 1.5.3. Start the services (on the VM)
 
@@ -271,7 +274,7 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
    postgres   Up 55 seconds (healthy)
    ```
 
-   <details><summary>Troubleshooting</summary>
+   <details><summary><b>Troubleshooting (click to open)</b></summary>
 
    <h4>Port conflict (<code>port is already allocated</code>)</h4>
 
@@ -295,17 +298,17 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
 1. Open in a browser: `http://<your-vm-ip-address>:<caddy-port>/docs`.
 
    e.g. [http://10.93.x.x:42002/docs](http://10.93.x.x:42002/docs)
-   
+
    > You set caddy port in `.env.docker.secret`, by default it is 42002.
 
    You should see the `Swagger UI` page with endpoints including `/pipeline/sync` and `/analytics/`.
 
-3. [Authorize in Swagger](../../wiki/swagger.md#authorize-in-swagger-ui) with `API_KEY` you have in `.env.docker.secret`.
+2. [Authorize in Swagger](../../wiki/swagger.md#authorize-in-swagger-ui) with `API_KEY` you have in `.env.docker.secret`.
 
    > You can check both the `API_KEY` and `caddy-port` by opening the env file on VM:
    > `nano .env.docker.secret`, then when done close it with `CLTR X`
 
-5. Try the `GET /items/` endpoint.
+3. Try the `GET /items/` endpoint.
 
    You should get an empty array `[]` — the database has no data yet.
 
@@ -317,18 +320,21 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
 2. Install `Qwen code` on your local machine.
 
   Linux / macOS:
+
   ```bash
   curl -fsSL https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-qwen.sh | bash
   ```
   
   Windows (Run as Administrator CMD):
+
   ```cmd
   curl -fsSL -o %TEMP%\install-qwen.bat https://qwen-code-assets.oss-cn-hangzhou.aliyuncs.com/installation/install-qwen.bat && %TEMP%\install-qwen.bat
   ```
   
   > **Note**: It's recommended to restart your terminal after installation to ensure environment variables take effect.
 
-3. Now launch `Qwen code` in Terminal on your laptop:
+1. Now launch `Qwen code` in Terminal on your laptop:
+
   ```terminal
   qwen
   ```
@@ -336,6 +342,7 @@ We refer to your fork as `fork` and to the original repo as `upstream` (выше
   And authenticate with your Qwen Chat OAuth option following the instructions.
   
   You can now ask it, for example:
+
   ```
   What is this lab supposed to teach me?
   ```

@@ -8,6 +8,7 @@
   - [Extension](#extension)
   - [Location](#location)
 - [Directory](#directory)
+  - [Subdirectory](#subdirectory)
 - [Path](#path)
   - [Absolute path](#absolute-path)
   - [Relative path](#relative-path)
@@ -60,6 +61,10 @@ A directory (a.k.a. "folder" on `Windows`) is a special type of [file](#file) th
 
 Directories nest inside one another, forming a tree structure rooted at the [root directory](#root-directory-).
 
+### Subdirectory
+
+<!-- TODO -->
+
 ## Path
 
 A path points to a [location](#location) in the [filesystem](#what-is-a-file-system).
@@ -95,7 +100,7 @@ Its [absolute path](#absolute-path) is `/`.
 
 Shortcut for the [absolute path](#absolute-path) for the [user](./operating-system.md#user) home [directory](#directory) `/home/<user>/`.
 
-See [`<user>`](./operating-system.md#user-placeholder).
+See [`<user>`](./operating-system.md#username-placeholder).
 
 ### Current directory (`.`)
 
